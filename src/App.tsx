@@ -1,10 +1,10 @@
-import Card from "./components/Card";
-import img from "../src/assets/images/product-1.jpg";
+import GameBoard from "./components/GameBoard";
+import { gameCards } from "./constant/cardImages";
 
 function App() {
     return (
-        <div className="">
-            <Card id={1} flipped image={img} onClick={() => {}} />
+        <div className="p-11">
+            <GameBoard cards={gameCards} />
         </div>
     );
 }
