@@ -544,3 +544,38 @@ video {
   --tw-contain-paint:  ;
   --tw-contain-style:  ;
 }
+
+.h-\[128px\] {
+  height: 128px;
+}
+
+.w-\[128px\] {
+  width: 128px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.content-center {
+  align-content: center;
+}
+
+.bg-red-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(220 38 38 / var(--tw-bg-opacity));
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
