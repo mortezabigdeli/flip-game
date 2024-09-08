@@ -13,7 +13,7 @@ export interface GameCard {
     correct: boolean;
 }
 
-export const gameCards: GameCard[] = [
+const gameCards: GameCard[] = [
     { id: 1, image: img1, correct: false },
     { id: 2, image: img1, correct: false },
     { id: 3, image: img2, correct: false },
@@ -30,4 +30,6 @@ export const gameCards: GameCard[] = [
     { id: 14, image: img7, correct: false },
     { id: 15, image: img8, correct: false },
     { id: 16, image: img8, correct: false },
-].sort(() => Math.random() - 0.5);
+];
+
+export const getGameCards = () => gameCards.sort(() => Math.random() - 0.5);

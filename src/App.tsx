@@ -1,10 +1,9 @@
 import GameBoard from "./components/GameBoard";
-import { gameCards } from "./constant/cardImages";
 
 function App() {
     return (
-        <div className="p-11">
-            <GameBoard cards={gameCards} />
+        <div className="flex justify-center w-full h-full p-20">
+            <GameBoard maxChoicesCount={40} maxTimeInMinute={2} />
         </div>
     );
 }

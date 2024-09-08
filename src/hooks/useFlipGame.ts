@@ -1,25 +1,42 @@
-import { useEffect, useState } from "react";
-import { GameCard } from "../constant/cardImages";
+import { useEffect, useRef, useState } from "react";
+import { GameCard, getGameCards } from "../constant/cardImages";
 import { getDiffTime } from "../utils/dateUtil";
 
 type UseFlipGameProps = {
-    cards: GameCard[];
+    maxChoicesCount: number;
+    maxTimeInMinute: number;
 };
 type SelectedCard = { id: number; image: string } | null;
 
-export const useFlipGame = ({ cards }: UseFlipGameProps) => {
-    const [state, setState] = useState<GameCard[]>([...cards]);
+export const useFlipGame = ({ maxChoicesCount, maxTimeInMinute }: UseFlipGameProps) => {
+    const [cards, setCards] = useState<GameCard[]>(getGameCards);
     const [selected1, setSelected1] = useState<SelectedCard>(null);
     const [selected2, setSelected2] = useState<SelectedCard>(null);
     const [lock, setLock] = useState<boolean>(false);
-    const [choicesCount, setChoicesCount] = useState<number>(4);
-    const [remainingTime, setRemainingTime] = useState<number>(getDiffTime(2));
+    const [choicesCount, setChoicesCount] = useState<number>(maxChoicesCount);
+    const [remainingTime, setRemainingTime] = useState<number>(getDiffTime(maxTimeInMinute));
+
+    const interval = useRef<any>();
+
+    const startTimer = () => {
+        interval.current = setInterval(() => {
+            setRemainingTime((prev) => prev - 1000);
+        }, 1000);
+    };
 
     const handleClick = (id: number, image: string) => {
         if (!lock && selected1?.id !== id) {
             selected1 ? setSelected2({ id, image }) : setSelected1({ id, image });
             setChoicesCount(choicesCount - 1);
         }
+    };
+
+    const handleResetGame = () => {
+        resetStates();
+        setChoicesCount(maxChoicesCount);
+        setRemainingTime(getDiffTime(maxTimeInMinute));
+        setCards(getGameCards);
+        clearInterval(interval.current);
     };
 
     const resetStates = () => {
@@ -30,27 +47,32 @@ export const useFlipGame = ({ cards }: UseFlipGameProps) => {
 
     useEffect(() => {
         choicesCount <= 0 && setLock(true);
+        choicesCount === 39 && startTimer();
     }, [choicesCount]);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            setRemainingTime((prev) => prev - 1000);
-        }, 1000);
-        return () => clearInterval(interval);
+        return () => clearInterval(interval.current);
     }, []);
+
+    useEffect(() => {
+        if (remainingTime < 1) {
+            setLock(true);
+            clearInterval(interval.current);
+        }
+    }, [remainingTime]);
 
     useEffect(() => {
         if (selected1 && selected2) {
             setLock(true);
             if (selected1.image === selected2.image) {
-                const newState = state.map((card) => {
+                const newState = cards.map((card) => {
                     if (card.image === selected1.image) {
                         return { ...card, correct: true };
                     } else {
                         return card;
                     }
                 });
-                setState(newState);
+                setCards(newState);
                 resetStates();
             } else {
                 setTimeout(() => resetStates(), 1000);
@@ -58,5 +80,5 @@ export const useFlipGame = ({ cards }: UseFlipGameProps) => {
         }
     }, [selected1, selected2]);
 
-    return { state, selected1, selected2, choicesCount, remainingTime, handleClick };
+    return { cards, selected1, selected2, choicesCount, remainingTime, handleClick, handleResetGame };
 };

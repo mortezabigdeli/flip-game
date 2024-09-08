@@ -1,23 +1,28 @@
-import { GameCard } from "../constant/cardImages";
 import Card from "./Card";
 import { useFlipGame } from "../hooks/useFlipGame";
-import { getMinute, getSecond } from "../utils/dateUtil";
+import CountDown from "./CountDown";
+import LabelValue from "./LabelValue";
+import Button from "./Button";
 
-const GameBoard = ({ cards }: { cards: GameCard[] }) => {
-    const { choicesCount, selected1, selected2, state, remainingTime, handleClick } = useFlipGame({ cards });
+interface GameBoardProps {
+    maxChoicesCount: number;
+    maxTimeInMinute: number;
+}
+
+const GameBoard = ({ maxChoicesCount, maxTimeInMinute }: GameBoardProps) => {
+    const { choicesCount, selected1, selected2, cards, remainingTime, handleClick, handleResetGame } = useFlipGame({
+        maxChoicesCount,
+        maxTimeInMinute,
+    });
 
     return (
-        <>
-            <div>
-                تعداد حرکت:
-                <span>{choicesCount}</span>
+        <div className="w-[512px]">
+            <div className="flex w-100 justify-between">
+                <CountDown timestamp={remainingTime} />
+                <LabelValue label="تعداد حرکت:" value={choicesCount} />
             </div>
-            <div>
-                زمان:
-                {getMinute(remainingTime)}:{getSecond(remainingTime)}
-            </div>
-            <div className="grid grid-cols-4 gap-x-3 gap-y-1 w-[512px]">
-                {state.map(({ id, image, correct }) => (
+            <div className="grid grid-cols-4 gap-x-3 gap-y-1">
+                {cards.map(({ id, image, correct }) => (
                     <Card
                         onClick={handleClick}
                         key={id}
@@ -27,7 +32,10 @@ const GameBoard = ({ cards }: { cards: GameCard[] }) => {
                     />
                 ))}
             </div>
-        </>
+            <div>
+                <Button onClick={handleResetGame} title="شروع دوباره" />
+            </div>
+        </div>
     );
 };
 
